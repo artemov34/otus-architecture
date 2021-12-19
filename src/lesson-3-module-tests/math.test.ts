@@ -9,7 +9,7 @@ describe('test math class', () => {
   });
 
   it('solve must be summ', () => {
-    expect(squareRoot.solve(1,2,3)).toBe(6)
+    expect(squareRoot.solve(1,2,3)).toBe(3)
   })
 
 })
