@@ -1,6 +1,9 @@
 import { RotableAdapter, RotateCommand } from './rotable';
 import { MoveCommand, MovableAdapter } from './movable';
-import { UObject } from './uobject';
+import { Command } from './core/command';
+import { RetryCommand } from './core/retry';
+import { ErrorHandlerCommand } from './core/error-handler';
+
 describe('object movable', () => {
   let tank = {
     position: [12,5],
@@ -45,6 +48,40 @@ describe('object movable', () => {
     tank = {}
     const mockObject: RotateCommand = new RotateCommand(new RotableAdapter(tank));
     expect(() => mockObject.execute()).toThrow('can not rotate, not have default parametrs')
+  })
+
+  it('repeat command and handler must run', () => {
+    tank = {
+      position: [12,5],
+      //velocity: [-7,3]
+    }
+    let retrySpy;
+    let errorHandlerSpy;
+
+    const cmds: { command: Command }[] = [
+      { command: new MoveCommand(new MovableAdapter(tank)) },
+      { command: new RotateCommand(new RotableAdapter(tank)) },
+    ];
+
+    for (let i = 0; i < cmds.length; i++) {
+      const { command } = cmds[i];
+      try {
+        command.execute();
+      } catch(e) {
+        if(command.constructor.name !== 'RetryCommand') {
+          const retry = new RetryCommand(command);
+          retrySpy = jest.spyOn(retry, 'execute');
+          cmds.push({ command: retry });
+        } else {
+          const errorHandler = new ErrorHandlerCommand(e as Error);
+          errorHandlerSpy = jest.spyOn(errorHandler, 'execute');
+          cmds.push({ command: errorHandler });
+        }
+      }
+    }
+
+    expect(retrySpy).toBeCalledTimes(1);
+    expect(errorHandlerSpy).toBeCalledTimes(1);
   })
 
 

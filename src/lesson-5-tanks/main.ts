@@ -1,9 +1,6 @@
-import { Command } from './command';
+import { MoveCommand, MovableAdapter } from './movable';
+import { Command } from './core/command';
 import { UObject } from "./uobject";
-
-class Tank {
-  uname = 'Tank'
-}
-
-const obj: UObject = new Tank();
-const cmds = []
+import { RotateCommand, RotableAdapter } from './rotable';
+import { ErrorHandlerCommand } from './core/error-handler';
+import { RetryCommand } from './core/retry';
