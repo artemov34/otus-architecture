@@ -1,4 +1,4 @@
-import { Command } from "./command";
+import { Command } from "./core/command";
 import { UObject } from "./uobject"
 
 interface IRotable
