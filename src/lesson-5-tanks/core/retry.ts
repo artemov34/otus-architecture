@@ -1,13 +1,8 @@
-import { Command } from './command';
+import { Command, IComandList } from './command';
 
 export class RetryCommand implements Command {
-  name!: string;
-  retryCount: number = 0;
-  constructor(public cmd: Command) {
-    this.name = this.cmd.constructor.name;
-  }
+  constructor(public cmd: Command) {}
   execute(): void {
-    this.retryCount += 1;
     this.cmd.execute();
   }
 }
